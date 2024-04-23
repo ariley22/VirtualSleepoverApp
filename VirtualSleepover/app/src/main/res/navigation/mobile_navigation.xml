@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="edu.utap.virtualsleepover.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_questionRW"
+            app:destination="@id/navigation_questionRW" />
+        <action
+            android:id="@+id/action_homeFragment_to_join"
+            app:destination="@id/navigation_join" />
+        <action
+            android:id="@+id/action_homeFragment_to_connect"
+            app:destination="@id/navigation_connect" />
+        <action
+            android:id="@+id/action_homeFragment_to_waiting"
+            app:destination="@id/navigation_waiting" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_scrapbook"
+        android:name="edu.utap.virtualsleepover.ui.scrapbook.ScrapbookFragment"
+        android:label="@string/title_scrapbook"
+        tools:layout="@layout/fragment_scrapbook" />
+
+    <fragment
+        android:id="@+id/navigation_questionRW"
+        android:name="edu.utap.virtualsleepover.ui.reusables.QuestionRWFragment"
+        android:label="Play"
+        tools:layout="@layout/fragment_question_rw">
+        <action
+            android:id="@+id/action_questionRW_to_viewAnswer"
+            app:destination="@id/navigation_viewAnswer" />
+        <action
+            android:id="@+id/action_questionRW_to_home"
+            app:destination="@id/navigation_home" />
+        <action
+            android:id="@+id/action_questionRW_to_waiting"
+            app:destination="@id/navigation_waiting" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_viewAnswer"
+        android:name="edu.utap.virtualsleepover.ui.reusables.ViewAnswerFrag"
+        android:label="View Answers"
+        tools:layout="@layout/fragment_view_answer">
+        <action
+            android:id="@+id/action_viewAnswerFragment_to_home"
+            app:destination="@id/navigation_home" />
+        <action
+            android:id="@+id/action_viewAnswerFragment_to_waiting"
+            app:destination="@id/navigation_waiting" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_join"
+        android:name="edu.utap.virtualsleepover.ui.home.JoinFragment"
+        android:label="Join Game"
+        tools:layout="@layout/fragment_join">
+        <action
+            android:id="@+id/action_joinFragment_to_questionRW"
+            app:destination="@id/navigation_questionRW" />
+        <action
+            android:id="@+id/action_joinFragment_to_waiting"
+            app:destination="@id/navigation_waiting" />
+        <action
+            android:id="@+id/action_joinFragment_to_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_connect"
+        android:name="edu.utap.virtualsleepover.ui.home.ConnectFrag"
+        android:label="Add Partner"
+        tools:layout="@layout/fragment_connect">
+        <action
+            android:id="@+id/action_connectFragment_to_waiting"
+            app:destination="@id/navigation_waiting" />
+        <action
+            android:id="@+id/action_connectFragment_to_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_waiting"
+        android:name="edu.utap.virtualsleepover.ui.reusables.WaitingFrag"
+        android:label="Please wait..."
+        tools:layout="@layout/fragment_waiting">
+        <action
+            android:id="@+id/action_waitFragment_to_questionRW"
+            app:destination="@id/navigation_questionRW" />
+        <action
+            android:id="@+id/action_waitFragment_to_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
+</navigation>
