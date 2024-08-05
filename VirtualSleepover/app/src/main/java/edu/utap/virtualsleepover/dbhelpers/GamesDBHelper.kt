@@ -174,4 +174,21 @@ class GamesDBHelper() {
         response2Listener?.remove()
         response2Listener = null
     }
+
+    fun doesGameExist(gameID: String): Boolean{
+        val documentReference = db.collection(collectionRoot).document(gameID)
+        return documentReference.get().isSuccessful
+    }
+
+    fun isGameOpen(gameID: String): Boolean{
+        val documentReference = db.collection(collectionRoot).document(gameID)
+        val documentSnapshot = documentReference.get().result
+
+        return if (documentSnapshot != null && documentSnapshot.exists()) {
+            documentSnapshot.getString("player2").isNullOrEmpty()
+        }
+        else {
+            false
+        }
+    }
 }

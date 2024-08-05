@@ -14,6 +14,12 @@ interface TruthOrDareApi {
     @GET("truth")
     suspend fun getTruthQuestion(): TruthOrDare
 
+    @GET("dare")
+    suspend fun getDare(): TruthOrDare
+
+    @GET("wyr")
+    suspend fun getWyrQuestion(): TruthOrDare
+
     companion object Factory {
         fun create(): TruthOrDareApi {
             val retrofit: Retrofit = Retrofit.Builder()

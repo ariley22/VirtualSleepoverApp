@@ -10,24 +10,116 @@
         android:id="@+id/TenQuestionsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Game"
-        app:layout_constraintBottom_toTopOf="@id/EnterIdButton"
+        android:text="10 Questions"
+        app:layout_constraintBottom_toTopOf="@id/TruthOrDareButton"
         android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
+
+    <Button
+        android:id="@+id/TruthOrDareButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Truth or Dare"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toTopOf="@id/WyrButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TenQuestionsButton" />
+
+    <Button
+        android:id="@+id/WyrButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="Would You Rather"
+        app:layout_constraintBottom_toTopOf="@id/EnterIdButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TruthOrDareButton" />
+
+
     <Button
         android:id="@+id/EnterIdButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Join with Game ID"
         android:layout_margin="8dp"
-        app:layout_constraintBottom_toTopOf="@id/logoutButton"
+        android:backgroundTint="@color/black"
+        app:layout_constraintBottom_toTopOf="@id/currentlyConnectedTV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TenQuestionsButton" />
+        app:layout_constraintTop_toBottomOf="@id/WyrButton" />
 
+    <TextView
+            android:id="@+id/currentlyConnectedTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Currently connected to user:"
+            android:textSize="22sp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/partnerLine"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/EnterIdButton" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/partnerLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/gameInProgressTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/currentlyConnectedTV"
+        app:layout_constraintVertical_bias="0.5"
+        app:layout_constraintVertical_chainStyle="packed">
+    <TextView
+            android:id="@+id/partnerNameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="N/A"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/disconnectButton"
+            app:layout_constraintTop_toTopOf="parent" />
+    <ImageButton
+        android:id="@+id/disconnectButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/baseline_delete_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginLeft="4dp"
+        app:layout_constraintStart_toEndOf="@id/partnerNameTV"
+        app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/gameInProgressTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You have a game in progress"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/red"
+        app:layout_constraintBottom_toTopOf="@id/continueButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/partnerLine" />
+    <Button
+        android:id="@+id/continueButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Continue"
+        android:layout_margin="8dp"
+        android:backgroundTint="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/gameInProgressTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/logoutButton" />
     <Button
         android:id="@+id/logoutButton"
         android:layout_width="wrap_content"
@@ -35,7 +127,7 @@
         android:text="log out"
         android:layout_margin="8dp"
         android:backgroundTint="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/EnterIdButton"
+        app:layout_constraintTop_toBottomOf="@id/continueButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
