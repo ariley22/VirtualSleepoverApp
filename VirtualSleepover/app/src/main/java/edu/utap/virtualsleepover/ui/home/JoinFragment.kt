@@ -31,18 +31,7 @@ class JoinFragment : Fragment(R.layout.fragment_join) {
 
         binding.checkGameButton.setOnClickListener {
             val gameID = binding.gameIdET.text.toString()
-//            if(!viewModel.doesGameExist(gameID)){
-//                val snackbar = Snackbar.make(it, "Invalid game ID",
-//                    Snackbar.LENGTH_LONG)
-//                snackbar.show()
-//            }
-            // else
-//            if(!viewModel.isGameOpen(gameID)){
-//                val snackbar = Snackbar.make(it, "Game already has 2 players",
-//                    Snackbar.LENGTH_LONG)
-//                snackbar.show()
-//            }
-//            else
+
             if(binding.displayNameET.text.isEmpty()){
                 val snackbar = Snackbar.make(it, "Please enter display name",
                     Snackbar.LENGTH_LONG)

@@ -39,8 +39,6 @@ class ViewAnswerFrag : Fragment(R.layout.fragment_view_answer) {
         viewModel.response1Listener()
         viewModel.response2Listener()
 
-        binding.partnerAnswer.movementMethod = ScrollingMovementMethod()
-        binding.userAnswer.movementMethod = ScrollingMovementMethod()
         binding.nextButton.visibility = View.GONE
         binding.currentRoundTV.text = viewModel.getCurrentRound().toString()
 

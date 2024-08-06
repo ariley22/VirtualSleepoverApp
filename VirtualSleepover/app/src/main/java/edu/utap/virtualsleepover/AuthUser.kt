@@ -106,8 +106,4 @@ class AuthUser(private val registry: ActivityResultRegistry) :
             signInLauncher.launch(signInIntent)
         }
     }
-    fun logout() {
-        if(user() == null) return
-        Firebase.auth.signOut()
-    }
 }

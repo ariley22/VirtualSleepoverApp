@@ -97,18 +97,6 @@ class MainViewModel : ViewModel() {
         genQuestion.postValue(truthRepository.getTruthQuestion())
     }
 
-    fun netDare() = viewModelScope.launch(
-        context = viewModelScope.coroutineContext
-                + Dispatchers.IO) {
-        genQuestion.postValue(truthRepository.getDare())
-    }
-
-    fun netWyr() = viewModelScope.launch(
-        context = viewModelScope.coroutineContext
-                + Dispatchers.IO) {
-        genQuestion.postValue(truthRepository.getWyrQuestion())
-    }
-
     fun observeGenQuestion(): LiveData<String> {
         return genQuestion
     }
@@ -253,14 +241,6 @@ class MainViewModel : ViewModel() {
                 isUserWriting = false
             }
         }
-    }
-
-    fun doesGameExist(gameID: String): Boolean{
-        return gamesDbHelp.doesGameExist(gameID)
-    }
-
-    fun isGameOpen(gameID: String): Boolean{
-        return gamesDbHelp.isGameOpen(gameID)
     }
 
     fun observeGameID(): LiveData<String>{

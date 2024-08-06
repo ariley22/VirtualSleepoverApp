@@ -28,71 +28,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val binding = FragmentHomeBinding.bind(view)
         Log.d(javaClass.simpleName, "onViewCreated start")
 
-        //these functions post any existing user & game data from database to view model
-        //posts null/default data to view model if there is no data yet
-        viewModel.fetchGameInProgress()
-        var partnerName = ""
-
         viewModel.observeUID().observe(viewLifecycleOwner) {
             viewModel.setUserInfo()
         }
 
-        binding.currentlyConnectedTV.visibility = View.GONE
-        binding.partnerNameTV.visibility = View.GONE
-        binding.disconnectButton.visibility = View.GONE
-        binding.gameInProgressTV.visibility = View.GONE
-        binding.continueButton.visibility = View.GONE
-
-        viewModel.observePartnerName().observe(viewLifecycleOwner) {
-            partnerName = it
-            if (it.isNotEmpty()) {
-                binding.currentlyConnectedTV.visibility = View.VISIBLE
-                binding.partnerNameTV.visibility = View.VISIBLE
-                binding.partnerNameTV.text = it
-                binding.disconnectButton.visibility = View.VISIBLE
-            }
-        }
-
-        viewModel.observeGameID().observe(viewLifecycleOwner) {
-            //executes if an actual game in progress is found
-            if (it.isNotEmpty()) {
-                binding.gameInProgressTV.visibility = View.VISIBLE
-                binding.continueButton.visibility = View.VISIBLE
-                binding.TenQuestionsButton.setOnClickListener {
-                    val snackbar = Snackbar.make(
-                        view, "Please finish game in progress first",
-                        Snackbar.LENGTH_LONG
-                    )
-                    snackbar.show()
-                }
-            }
-            //executes if variable only contains null game (new game will be created)
-            else {
-                binding.TenQuestionsButton.setOnClickListener {
-                    viewModel.createGame(1)
-                    //Check if the user has a partner from previous game
-                    //If so, the game will start with this partner
-                    //If not, they will be asked to connect to one
-                    if (partnerName.isEmpty()) toConnectScreen()
-                    else {
-                        enterGame()
-                    }
-
-                }
-            }
+        binding.TenQuestionsButton.setOnClickListener {
+            viewModel.createGame(1)
+            toConnectScreen()
         }
 
         binding.EnterIdButton.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToJoin())
-        }
-
-        binding.continueButton.setOnClickListener {
-            if (partnerName == "") toConnectScreen()
-            else enterGame()
-        }
-
-        binding.disconnectButton.setOnClickListener {
-            viewModel.disconnectUser()
         }
 
         binding.logoutButton.setOnClickListener {

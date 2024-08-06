@@ -18,19 +18,6 @@ import edu.utap.virtualsleepover.databinding.FragmentScrapbookBinding
 class ScrapbookFragment : Fragment(R.layout.fragment_scrapbook) {
         private val viewModel: MainViewModel by activityViewModels()
 
-        // https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.ViewHolder#getBindingAdapterPosition()
-        // Getting the position of the selected item is unfortunately complicated
-        // 3/2024, I think this is broken
-        private fun getPos(holder: RecyclerView.ViewHolder) : Int {
-            val pos = holder.bindingAdapterPosition
-            // notifyDataSetChanged was called, so position is not known
-            if( pos == RecyclerView.NO_POSITION) {
-                return holder.absoluteAdapterPosition
-            }
-            return pos
-        }
-
-        // No need for onCreateView because we passed R.layout to Fragment constructor
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             val binding = FragmentScrapbookBinding.bind(view)
