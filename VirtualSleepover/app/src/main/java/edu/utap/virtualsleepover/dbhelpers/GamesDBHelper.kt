@@ -13,14 +13,16 @@ class GamesDBHelper() {
     private var questionListener: ListenerRegistration? = null
     private var response1Listener: ListenerRegistration? = null
     private var response2Listener: ListenerRegistration? = null
+    private var player2Listener: ListenerRegistration? = null
     private var player1ReadyListener: ListenerRegistration? = null
     private var player2ReadyListener: ListenerRegistration? = null
 
-    fun createGame(gameID: String, game: HashMap<String, out Any>) {
+    fun createGame(gameID: String, game: HashMap<String, out Any>, onComplete: () -> Unit) {
         db.collection(collectionRoot).document(gameID)
             .set(game)
             .addOnSuccessListener {
                 Log.d(javaClass.simpleName, "Game successfully created")
+                onComplete()
             }
             .addOnFailureListener { e ->
                 Log.w(javaClass.simpleName, "Error creating game", e)
@@ -74,6 +76,16 @@ class GamesDBHelper() {
             }
     }
 
+    fun deleteGame(gameID: String, fetchGame: () -> Unit){
+        db.collection(collectionRoot).document(gameID)
+            .delete()
+            .addOnSuccessListener {
+                Log.d(javaClass.simpleName, "Game successfully deleted!")
+                fetchGame()
+            }
+            .addOnFailureListener { e -> Log.w(javaClass.simpleName, "Error deleting game", e) }
+    }
+
     fun questionListener(gameID: String, listener: (String) -> Unit) {
         var question = ""
         questionListener = db.collection(collectionRoot).document(gameID).addSnapshotListener { snapshot, e ->
@@ -116,6 +128,20 @@ class GamesDBHelper() {
                 response = snapshot.getString("player2Response") ?: ""
             }
             listener(response)
+        }
+    }
+
+    fun player2Listener(gameID: String, listener: (String) -> Unit){
+        var player2 = ""
+        player2Listener = db.collection(collectionRoot).document(gameID).addSnapshotListener{ snapshot, e ->
+            if (e != null){
+                Log.w(javaClass.simpleName, "Listen failed.", e)
+                return@addSnapshotListener
+            }
+            if (snapshot != null && snapshot.exists()) {
+                player2 = snapshot.getString("player2") ?: ""
+            }
+            listener(player2)
         }
     }
 
@@ -163,6 +189,11 @@ class GamesDBHelper() {
     fun stopResponse2Listener() {
         response2Listener?.remove()
         response2Listener = null
+    }
+
+    fun stopPlayer2Listener(){
+        player2Listener?.remove()
+        player2Listener = null
     }
 
     fun stopPlayer1ReadyListener() {

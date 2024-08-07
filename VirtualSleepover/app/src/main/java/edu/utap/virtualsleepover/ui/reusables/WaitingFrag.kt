@@ -46,9 +46,7 @@ class WaitingFrag : Fragment(R.layout.fragment_waiting) {
         viewModel.player1ReadyListener()
         viewModel.player2ReadyListener()
 
-        viewModel.observePartnerName().observe(viewLifecycleOwner) {
-            binding.partnerNameTV.text = it
-        }
+        binding.partnerNameTV.text = viewModel.getOtherPlayerName()
 
         if (viewModel.inBetweenRounds) {
             if(viewModel.currentRoundStatic == 2) binding.writeOrRespondTV.text = "finish game..."
@@ -121,7 +119,7 @@ class WaitingFrag : Fragment(R.layout.fragment_waiting) {
 
                 viewModel.nextRound{
                     findNavController().navigate(WaitingFragDirections.actionWaitFragmentToHome())
-                    viewModel.fetchGameInProgress()
+                    viewModel.endDeleteGame()
                 }
 
             if(viewModel.currentRoundStatic <= 2) {

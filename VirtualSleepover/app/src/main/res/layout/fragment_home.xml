@@ -6,6 +6,62 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
+    <TextView
+        android:id="@+id/loadingTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LOADING OPTIONS..."
+        android:textColor="@color/black"
+        android:textAlignment="center"
+        android:textStyle="bold|italic"
+        android:textSize="30sp"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toTopOf="@id/gameInProgressTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/gameInProgressTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="You have a game in progress"
+        android:textColor="@color/red"
+        android:textAlignment="center"
+        android:textStyle="bold|italic"
+        android:textSize="18sp"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toTopOf="@id/continueButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/loadingTV"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <Button
+        android:id="@+id/continueButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Continue Game"
+        app:layout_constraintBottom_toTopOf="@id/DeleteButton"
+        android:layout_margin="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gameInProgressTV"
+        app:layout_constraintVertical_chainStyle="packed" />
+    <Button
+        android:id="@+id/DeleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete Game"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintBottom_toTopOf="@id/TenQuestionsButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/continueButton"
+        app:layout_constraintVertical_chainStyle="packed" />
+
     <Button
         android:id="@+id/TenQuestionsButton"
         android:layout_width="wrap_content"
@@ -15,7 +71,7 @@
         android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/DeleteButton"
         app:layout_constraintVertical_chainStyle="packed" />
     <Button
         android:id="@+id/EnterIdButton"
@@ -26,7 +82,8 @@
         app:layout_constraintBottom_toTopOf="@id/logoutButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TenQuestionsButton" />
+        app:layout_constraintTop_toBottomOf="@id/TenQuestionsButton"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <Button
         android:id="@+id/logoutButton"

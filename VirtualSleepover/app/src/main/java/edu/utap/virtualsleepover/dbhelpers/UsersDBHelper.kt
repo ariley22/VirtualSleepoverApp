@@ -9,7 +9,6 @@ import edu.utap.virtualsleepover.models.GameUser
 class UsersDBHelper() {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val collectionRoot = "users"
-    private var partnerListener: ListenerRegistration? = null
 
     fun getUserInfo(uid: String, getUser: (GameUser?) -> Unit){
         var returnUser = GameUser()
@@ -37,25 +36,5 @@ class UsersDBHelper() {
             .addOnFailureListener { e ->
                 Log.w(javaClass.simpleName, "Error updating user", e)
             }
-    }
-
-    fun partnerListener(uid: String, listener: (String) -> Unit) {
-        var partner = ""
-        partnerListener = db.collection(collectionRoot).document(uid).addSnapshotListener { snapshot, e ->
-            if (e != null) {
-                Log.w(javaClass.simpleName, "Listen failed.", e)
-                return@addSnapshotListener
-            }
-
-            if (snapshot != null && snapshot.exists()) {
-                partner = snapshot.getString("connectedUser") ?: ""
-            }
-            listener(partner)
-        }
-    }
-
-    fun stopPartnerListener() {
-        partnerListener?.remove()
-        partnerListener = null
     }
 }

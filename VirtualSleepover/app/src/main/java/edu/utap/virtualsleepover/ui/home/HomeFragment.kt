@@ -27,18 +27,53 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentHomeBinding.bind(view)
         Log.d(javaClass.simpleName, "onViewCreated start")
+        binding.loadingTV.visibility = View.VISIBLE
+        binding.gameInProgressTV.visibility = View.GONE
+        binding.continueButton.visibility = View.GONE
+        binding.DeleteButton.visibility = View.GONE
+        binding.TenQuestionsButton.visibility = View.GONE
+        binding.EnterIdButton.visibility = View.GONE
 
         viewModel.observeUID().observe(viewLifecycleOwner) {
             viewModel.setUserInfo()
+            viewModel.fetchGameInProgress()
+        }
+
+        viewModel.observeGameID().observe(viewLifecycleOwner){
+            binding.loadingTV.visibility = View.GONE
+            if (it.isNullOrEmpty()){
+                binding.gameInProgressTV.visibility = View.GONE
+                binding.continueButton.visibility = View.GONE
+                binding.DeleteButton.visibility = View.GONE
+                binding.TenQuestionsButton.visibility = View.VISIBLE
+                binding.EnterIdButton.visibility = View.VISIBLE
+            }
+            else{
+                binding.gameInProgressTV.visibility = View.VISIBLE
+                binding.continueButton.visibility = View.VISIBLE
+                binding.DeleteButton.visibility = View.VISIBLE
+                binding.TenQuestionsButton.visibility = View.GONE
+                binding.EnterIdButton.visibility = View.GONE
+            }
         }
 
         binding.TenQuestionsButton.setOnClickListener {
-            viewModel.createGame(1)
-            toConnectScreen()
+            viewModel.createGame(1){
+                viewModel.fetchGameInProgress()
+                toConnectScreen()
+            }
         }
 
         binding.EnterIdButton.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToJoin())
+        }
+
+        binding.continueButton.setOnClickListener{
+            enterGame()
+        }
+
+        binding.DeleteButton.setOnClickListener{
+            viewModel.endDeleteGame()
         }
 
         binding.logoutButton.setOnClickListener {

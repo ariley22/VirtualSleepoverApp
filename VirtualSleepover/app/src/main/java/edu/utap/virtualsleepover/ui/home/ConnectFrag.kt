@@ -23,9 +23,6 @@ class ConnectFrag : Fragment(R.layout.fragment_connect) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentConnectBinding.bind(view)
         Log.d(javaClass.simpleName, "onViewCreated start")
-        viewModel.fetchGameInProgress()
-        viewModel.setUserInfo()
-        viewModel.partnerListener()
 
         binding.successTV.visibility = View.GONE
         binding.continueButton.visibility = View.GONE
@@ -34,17 +31,22 @@ class ConnectFrag : Fragment(R.layout.fragment_connect) {
         viewModel.observeGameID().observe(viewLifecycleOwner) {
             binding.gameIdTV.text = it
             gameID = it
+            viewModel.fetchGameInProgress()
         }
 
         viewModel.observeDisplayName().observe(viewLifecycleOwner){
             binding.displayNameET.setText(it)
         }
 
-        viewModel.partnerSnapshot.observe(viewLifecycleOwner) {
+        viewModel.setUserInfo()
+
+        viewModel.player2Listener()
+
+        viewModel.player2Snapshot.observe(viewLifecycleOwner) {
+            viewModel.fetchGameInProgress()
             Log.d(javaClass.simpleName, "Connect fragment changed, partner UID: $it")
             if(it != ""){
                 binding.successTV.visibility = View.VISIBLE
-                binding.successTV.text = "Success! You are now connected"
                 binding.continueButton.visibility = View.VISIBLE
             }
         }
@@ -66,7 +68,7 @@ class ConnectFrag : Fragment(R.layout.fragment_connect) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.stopPartnerListener()
         _binding = null
+        viewModel.stopPlayer2Listener()
     }
 }

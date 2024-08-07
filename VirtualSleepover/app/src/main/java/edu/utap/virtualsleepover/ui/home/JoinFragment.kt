@@ -23,11 +23,25 @@ class JoinFragment : Fragment(R.layout.fragment_join) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentJoinBinding.bind(view)
         Log.d(javaClass.simpleName, "onViewCreated start")
-        viewModel.fetchGameInProgress()
-        viewModel.setUserInfo()
 
         binding.gameReadyTV.visibility = View.GONE
         binding.continueButton.visibility = View.GONE
+
+        viewModel.observeDisplayName().observe(viewLifecycleOwner){
+            binding.displayNameET.setText(it)
+        }
+
+        viewModel.observePlayer1ID().observe(viewLifecycleOwner){
+            Log.d(javaClass.simpleName, "Join fragment changed, partner UID: $it")
+
+            if(!it.isNullOrEmpty()){
+                binding.gameReadyTV.visibility = View.VISIBLE
+                binding.continueButton.visibility = View.VISIBLE
+            }
+        }
+
+        viewModel.fetchGameInProgress()
+        viewModel.setUserInfo()
 
         binding.checkGameButton.setOnClickListener {
             val gameID = binding.gameIdET.text.toString()
@@ -44,19 +58,6 @@ class JoinFragment : Fragment(R.layout.fragment_join) {
             }
         }
 
-        viewModel.observeDisplayName().observe(viewLifecycleOwner){
-            binding.displayNameET.setText(it)
-        }
-
-        viewModel.observePlayer1ID().observe(viewLifecycleOwner){
-            Log.d(javaClass.simpleName, "Join fragment changed, partner UID: $it")
-
-            if(!it.isNullOrEmpty()){
-                viewModel.connectToUser(binding.displayNameET.text.toString())
-                binding.gameReadyTV.visibility = View.VISIBLE
-                binding.continueButton.visibility = View.VISIBLE
-            }
-        }
         binding.continueButton.setOnClickListener {
             viewModel.isUserWriting = true
             findNavController().navigate(JoinFragmentDirections.actionJoinFragmentToQuestionRW())

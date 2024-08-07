@@ -41,13 +41,10 @@ class ViewAnswerFrag : Fragment(R.layout.fragment_view_answer) {
 
         binding.nextButton.visibility = View.GONE
         binding.currentRoundTV.text = viewModel.getCurrentRound().toString()
+        binding.partnerNameText.text = viewModel.getOtherPlayerName()
 
         viewModel.observeCurrentQuestion().observe(viewLifecycleOwner){
             binding.questionTV.text = it
-        }
-
-        viewModel.observePartnerName().observe(viewLifecycleOwner){
-            binding.partnerNameText.text = it
         }
 
         viewModel.response1Snapshot.observe(viewLifecycleOwner){

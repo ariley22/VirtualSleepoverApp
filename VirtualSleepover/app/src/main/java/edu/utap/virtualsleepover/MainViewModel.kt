@@ -26,12 +26,9 @@ class MainViewModel : ViewModel() {
     var inBetweenRounds = false
     
     private val currentGame = MutableLiveData<Game>()
-
     private val userDisplayName = MutableLiveData<String>()
-    private val currentPartnerName = MutableLiveData<String>()
-    private val currentPartnerID = MutableLiveData<String>()
-
     private val gameID = MutableLiveData<String>()
+
     private val currentRoundLive = MutableLiveData<Int>()
     var playerNumber = 0
     var isUserWriting = true
@@ -60,10 +57,6 @@ class MainViewModel : ViewModel() {
 
     //////////////////////////////////////////////////////////////////////
     //Firestore database snapshots
-    private val _partnerSnapshot = MutableLiveData<String>()
-    val partnerSnapshot: LiveData<String>
-        get() = _partnerSnapshot
-
     private val _questionSnapshot = MutableLiveData<String>()
     val questionSnapshot: LiveData<String>
         get() = _questionSnapshot
@@ -75,6 +68,10 @@ class MainViewModel : ViewModel() {
     private val _response2Snapshot = MutableLiveData<String>()
     val response2Snapshot: LiveData<String>
         get() = _response2Snapshot
+
+    private val _player2Snapshot = MutableLiveData<String>()
+    val player2Snapshot: LiveData<String>
+        get() = _player2Snapshot
 
     private val _player1ReadySnapshot = MutableLiveData<Boolean>()
     val player1ReadySnapshot: LiveData<Boolean>
@@ -117,9 +114,7 @@ class MainViewModel : ViewModel() {
         Log.d(javaClass.simpleName, "Sending UID ${uidLiveData.value.toString()} to userDbhelper")
 
         usersDbHelp.getUserInfo(uidLiveData.value.toString()) { user ->
-            currentPartnerName.postValue(user!!.connectedUserName)
-            currentPartnerID.postValue(user.connectedUser)
-            userDisplayName.postValue(user.displayName)
+            userDisplayName.postValue(user!!.displayName)
         }
     }
 
@@ -133,67 +128,6 @@ class MainViewModel : ViewModel() {
 
     fun observePlayer1ID(): LiveData<String>{
         return player1ID
-    }
-
-    fun updatePartner(partner: String) {
-        _partnerSnapshot.value = partner
-    }
-
-    fun partnerListener(){
-        usersDbHelp.partnerListener(currentUID){
-            updatePartner(it)
-        }
-    }
-
-    fun stopPartnerListener(){
-        usersDbHelp.stopPartnerListener()
-    }
-
-    fun observePartnerName(): LiveData<String>{
-        return currentPartnerName
-    }
-
-    //the only way to call this is when player 2 types in the game ID
-    //this is not very flexible but makes it relatively controlled and safe to code
-    fun connectToUser(displayName: String){
-        val uid = uidLiveData.value.toString()
-        val partnerUid = player1ID.value.toString()
-
-        Log.d(javaClass.simpleName, "Starting connectToUser, UID: $uid")
-        Log.d(javaClass.simpleName, "Partner UID: $partnerUid")
-
-        val updatePlayer1 = hashMapOf(
-            "connectedUser" to uid,
-            "connectedUserName" to displayName
-        )
-        val updatePlayer2 = hashMapOf(
-            "connectedUser" to partnerUid
-        )
-
-        usersDbHelp.updateUser(uid, updatePlayer2){
-            setUserInfo()
-        }
-        usersDbHelp.updateUser(partnerUid, updatePlayer1) {
-            setUserInfo()
-        }
-    }
-
-    fun disconnectUser(){
-        val connectedUser = currentPartnerID.value.toString()
-
-        val user = hashMapOf(
-            "connectedUser" to "",
-            "connectedUserName" to "",
-            "currentGame" to ""
-        )
-
-        usersDbHelp.updateUser(uidLiveData.value.toString(), user){
-            setUserInfo()
-        }
-        usersDbHelp.updateUser(connectedUser, user){
-            setUserInfo()
-        }
-
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -210,24 +144,6 @@ class MainViewModel : ViewModel() {
             currentQuestionLive.postValue(game.currentQuestion)
             currentRoundLive.postValue(game.round)
             writingUser.postValue(game.writingUser)
-
-            var partner = ""
-
-            if(game.player1 == uidLiveData.value.toString()){
-                playerNumber = 1
-                partner = game.player2Name
-            }
-            else{
-                playerNumber = 2
-                partner = game.player1Name
-            }
-            val user = hashMapOf(
-                "connectedUserName" to partner
-            )
-
-            usersDbHelp.updateUser(uidLiveData.value.toString(), user){
-                setUserInfo()
-            }
 
             Log.d(javaClass.simpleName, "Updating isUserWriting. DB writingUser =" +
                     " ${writingUser.value}, viewModel playerNumber = $playerNumber")
@@ -317,6 +233,20 @@ class MainViewModel : ViewModel() {
         gamesDbHelp.stopResponse1Listener()
     }
 
+    fun updatePlayer2(player2: String){
+        _player2Snapshot.value = player2
+    }
+
+    fun player2Listener(){
+        gamesDbHelp.player2Listener(gameID.value.toString()){
+            updatePlayer2(it)
+        }
+    }
+
+    fun stopPlayer2Listener(){
+        gamesDbHelp.stopPlayer2Listener()
+    }
+
     fun updateResponse2(response: String) {
         _response2Snapshot.value = response
     }
@@ -359,6 +289,13 @@ class MainViewModel : ViewModel() {
         gamesDbHelp.stopPlayer2ReadyListener()
     }
 
+    fun getOtherPlayerName(): String{
+        if(playerNumber == 1){
+            return player2Name.value?.toString() ?: ""
+        }
+        else return player1Name.value?.toString() ?: ""
+    }
+
     fun readyForNextRound(){
         var game: HashMap<String, Any>
         if(playerNumber == 1){
@@ -398,33 +335,51 @@ class MainViewModel : ViewModel() {
         else finishGame()
     }
 
-    fun createGame(gameType: Int){
+    fun endDeleteGame(){
+        val user = hashMapOf(
+            "currentGame" to ""
+        )
+        val player1 = player1ID.value?.toString() ?: ""
+        val player2 = player2ID.value?.toString() ?: ""
+        if(player1.isNotEmpty()) {
+            usersDbHelp.updateUser(player1, user) {
+                setUserInfo()
+            }
+        }
+        if(player2.isNotEmpty()) {
+            usersDbHelp.updateUser(player2, user) {
+                setUserInfo()
+            }
+        }
+        gamesDbHelp.deleteGame(gameID.value.toString()){
+            fetchGameInProgress()
+        }
+    }
+
+    fun createGame(gameType: Int, onComplete: () -> Unit){
         //Create a game ID
         playerNumber = 1
-        val gameID = (100..999999).random().toString()
-        var firstWriter = 1
+        val newGameID = (100..999999).random().toString()
+        gameID.postValue(newGameID)
 
-        val playerTwo = currentPartnerID.value.toString()
-        if(playerTwo.isEmpty()) firstWriter = 2
-        val playerTwoDisplayName = currentPartnerName.value.toString()
+        val firstWriter = 2
 
         //Add player to game
         val game = hashMapOf(
             "player1" to uidLiveData.value.toString(),
             "gameType" to gameType,
             "writingUser" to firstWriter,
-            "round" to 1,
-            "player2" to playerTwo,
-            "player2Name" to playerTwoDisplayName
+            "round" to 1
         )
-        gamesDbHelp.createGame(gameID, game)
-        fetchGameInProgress()
+        gamesDbHelp.createGame(newGameID, game){
+            onComplete()
+        }
 
         // This method will add the game to the current user in the users collection.
         // It will also add the user to the collection if it's the first time they
         // create or join a game.
         val user = hashMapOf(
-            "currentGame" to gameID
+            "currentGame" to newGameID
         )
         usersDbHelp.updateUser(uidLiveData.value.toString(), user){
             setUserInfo()
@@ -433,14 +388,11 @@ class MainViewModel : ViewModel() {
 
     fun updateDisplayName(gameID: String, displayName: String){
         var game: HashMap<String, Any>
-        var partnerUid = ""
         if(playerNumber == 1){
             game = hashMapOf("player1Name" to displayName)
-            partnerUid = player2ID.value.toString()
         }
         else{
             game = hashMapOf("player2Name" to displayName)
-            partnerUid = player1ID.value.toString()
         }
         gamesDbHelp.updateGame(gameID, game){
             fetchGameInProgress()
@@ -451,12 +403,6 @@ class MainViewModel : ViewModel() {
         )
         usersDbHelp.updateUser(uidLiveData.value.toString(), user){
             setUserInfo()
-        }
-        if (!partnerUid.isNullOrEmpty()) {
-            val partner = hashMapOf(
-                "connectedUserName" to displayName
-            )
-            usersDbHelp.updateUser(partnerUid, partner) {}
         }
     }
 
@@ -496,7 +442,7 @@ class MainViewModel : ViewModel() {
             byUser = "self"
         }
         else{
-            byUser = currentPartnerName.value.toString()
+            byUser = getOtherPlayerName()
         }
 
         val scrapbook = hashMapOf(
